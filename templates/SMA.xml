@@ -16,24 +16,24 @@
 <map name='prior'>beast.math.distributions.Prior</map>
 
     <beauticonfig spec='BeautiConfig'
-        inputLabelMap='beast.core.MCMC.operator=Operators,
-	        beast.core.MCMC.logger=Loggers,
+        inputLabelMap='sma.SMAMCMC.operator=Operators,
+	        sma.SMAMCMC.logger=Loggers,
 			beast.evolution.sitemodel.SiteModel.mutationRate =Substitution Rate,
 			beast.evolution.speciation.SMATreePrior.birthDiffRate=Birth Rate'
-        inlinePlugins ='beast.core.MCMC.distribution,
+        inlinePlugins ='sma.SMAMCMC.distribution,
             beast.evolution.sitemodel.SiteModel.substModel,
             beast.evolution.tree.coalescent.ExponentialGrowth,
             beast.evolution.tree.coalescent.ConstantPopulation,
             beast.evolution.tree.coalescent.Coalescent,
             beast.core.State.stateNode'
-        collapsedPlugins ='beast.core.MCMC.logger'
-        suppressPlugins = 'beast.core.MCMC.operator,
-    		beast.core.MCMC.operatorschedule,
+        collapsedPlugins ='sma.SMAMCMC.logger'
+        suppressPlugins = 'sma.SMAMCMC.operator,
+    		sma.SMAMCMC.operatorschedule,
 	        beast.evolution.tree.coalescent.Coalescent.treeIntervals,
 	        beast.evolution.tree.coalescent.Coalescent.tree,
-	        beast.core.MCMC.state,
-	        beast.core.MCMC.distribution,
-	        beast.core.MCMC.init,
+	        sma.SMAMCMC.state,
+	        sma.SMAMCMC.distribution,
+	        sma.SMAMCMC.init,
 	        beast.evolution.speciation.BirthDeathGernhard08Model.treeIntervals,
 	        beast.evolution.speciation.BirthDeathGernhard08Model.tree,
 	        beast.evolution.speciation.BirthDeathGernhard08Model.sampleProbability,
@@ -145,7 +145,7 @@
         />
 
 		<panel spec='BeautiPanelConfig' panelname="SMA" tiptext="Substitution model adequacy parameters"
-            path='logger[id="SMAlog"]'
+            path='logger[id="SMAlog"]/log'
             hasPartitions="none" icon='9.png.x' forceExpansion='TRUE'
         />
 		<mergepoint id='aux-panels'/>
@@ -215,7 +215,7 @@
             <operator id='SMATreePriorWilsonBalding.t:$(n)' spec='WilsonBalding' weight="3" tree="@Tree.t:$(n)"/>
 
 
-            <prior id='meanBranchLengthPrior.t:$(n)' x='@meanBranchLength.t:$(n)'><distr spec="beast.math.distributions.Uniform" lower='0' upper='Infinity'/></prior>
+            <prior id='meanBranchLengthPrior.t:$(n)' x='@meanBranchLength.t:$(n)'><distr spec="beast.math.distributions.Uniform" lower='0' upper='1'/></prior>
             <prior id='GammaShapePrior.s:$(n)' x='@gammaShape.s:$(n)'><distr spec="beast.math.distributions.Exponential"><mean spec="parameter.RealParameter" estimate="false" value="1.0"/></distr></prior>
             <prior id='PropInvariantPrior.s:$(n)' x='@proportionInvariant.s:$(n)'><distr spec="beast.math.distributions.Uniform" lower='0' upper='1'/></prior>
   		    <operator id='meanBranchLengthScaler.t:$(n)' spec='ScaleOperator' scaleFactor="0.75" weight="3" parameter="@meanBranchLength.t:$(n)"/>
@@ -233,7 +233,7 @@
 			
 	<!-- tree prior on branch lengths -->
     <logger id="SMAlog" fileName="$(n)-SMA.trees" logEvery="1000">
-    	<log spec="sma.SMALogger" likelihood="@treeLikelihood.$(n)">
+    	<log id="SMALogger.$(n)" spec="sma.SMALogger" likelihood="@treeLikelihood.$(n)">
     		<statistic spec="sma.MultinomialLikelihood"/>
     	</log>
     </logger>
@@ -372,7 +372,7 @@
 
 <!-- framework for main model -->
 
-    <run spec="MCMC" id="mcmc" chainLength="10000000">
+    <run spec="sma.SMAMCMC" id="mcmc" chainLength="10000000">
 
         <state storeEvery='5000' id='state'>
         </state>

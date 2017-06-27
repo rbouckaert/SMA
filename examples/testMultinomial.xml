@@ -36,7 +36,7 @@ name="alignment">
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
 
-<run id="mcmc" spec="MCMC" chainLength="10000000">
+<run id="mcmc" spec="sma.SMAMCMC" chainLength="100000">
     <state id="state" storeEvery="5000">
         <tree id="Tree.t:dna" name="stateNode">
             <taxonset id="TaxonSet.dna" spec="TaxonSet">
@@ -129,9 +129,9 @@ name="alignment">
         <log id="TreeWithMetaDataLogger.t:dna" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:dna"/>
     </logger>
 
-    <logger id="SMAlog.dna" fileName="dna-SMA.trees" logEvery="1000">
+    <logger id="SMAlog.dna" fileName="SMALog.log" logEvery="1000">
     	<log spec="sma.SMALogger" likelihood="@treeLikelihood.dna">
-    		<statistic spec="sma.MultinomialLikelihood"/>
+    		<statistic id="MultinomialLikelihood" spec="sma.MultinomialLikelihood"/>
     	</log>
     </logger>
 
